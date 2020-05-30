@@ -75,70 +75,70 @@ class _Node:
             - 不能立即被合并
             - 夹在可以合并的两个级别不小于3的棋子之间
         """
-        if iscomplex:
-            bb = self.board.getRaw()
+        bb = self.board.getRaw()
 
-            def get_right(x, y):
-                if y == 7:
-                    return 0
+        def get_right(x, y):
+            if y == 7:
+                return 0
+            else:
+                y += 1
+                bl = bb[x][y][1]
+                v = bb[x][y][0]
+                if v != 0:
+                    return v
                 else:
-                    y += 1
-                    bl = bb[x][y][1]
-                    v = bb[x][y][0]
-                    if v != 0:
-                        return v
-                    else:
-                        if bl is belong:
-                            return 0
-                        return get_right(x, y)
+                    if bl is belong:
+                        return 0
+                    return get_right(x, y)
 
-            def get_left(x, y):
-                if y == 0:
-                    return 0
+        def get_left(x, y):
+            if y == 0:
+                return 0
+            else:
+                y -= 1
+                bl = bb[x][y][1]
+                v = bb[x][y][0]
+                if v != 0:
+                    return v
                 else:
-                    y -= 1
-                    bl = bb[x][y][1]
-                    v = bb[x][y][0]
-                    if v != 0:
-                        return v
-                    else:
-                        if bl is belong:
-                            return 0
-                        return get_left(x, y)
+                    if bl is belong:
+                        return 0
+                    return get_left(x, y)
 
-            def get_up(x, y):
-                if x == 0:
-                    return 0
+        def get_up(x, y):
+            if x == 0:
+                return 0
+            else:
+                x -= 1
+                bl = bb[x][y][1]
+                v = bb[x][y][0]
+                if v != 0:
+                    return v
                 else:
-                    x -= 1
-                    bl = bb[x][y][1]
-                    v = bb[x][y][0]
-                    if v != 0:
-                        return v
-                    else:
-                        if bl is belong:
-                            return 0
-                        return get_up(x, y)
+                    if bl is belong:
+                        return 0
+                    return get_up(x, y)
 
-            def get_down(x, y):
-                if x == 3:
-                    return 0
+        def get_down(x, y):
+            if x == 3:
+                return 0
+            else:
+                x += 1
+                bl = bb[x][y][1]
+                v = bb[x][y][0]
+                if v != 0:
+                    return v
                 else:
-                    x += 1
-                    bl = bb[x][y][1]
-                    v = bb[x][y][0]
-                    if v != 0:
-                        return v
-                    else:
-                        if bl is belong:
-                            return 0
-                        return get_down(x, y)
+                    if bl is belong:
+                        return 0
+                    return get_down(x, y)
 
-            pos = self.board.getNext(belong, rround)
-            ava = self.board.getNone(not belong)
-            L = []
-            if pos:  # 主动落子
-                L.append(pos)
+        pos = self.board.getNext(belong, rround)
+        ava = self.board.getNone(not belong)
+        L = []
+        if pos:  # 主动落子
+            L.append(pos)
+            if iscomplex:
                 for tile in ava:
                     x = tile[0]
                     y = tile[1]
@@ -148,32 +148,27 @@ class _Node:
                     down = get_down(x, y)
                     if (left == right and left >= 3) or (up == down and up >= 3):
                         L.append(tile)
-            else:  # 被动向对方落子
-                if ava:
-                    l = []
-                    for tile in ava:
-                        x = tile[0]
-                        y = tile[1]
-                        right = get_right(x, y)
-                        left = get_left(x, y)
-                        up = get_up(x, y)
-                        down = get_down(x, y)
-                        if (left == right and left >= 3) or (up == down and up >= 3):
-                            L.append(tile)
-                        if left != 1 and right != 1 and up != 1 and down != 1:
-                            l.append(tile)
+        else:  # 被动向对方落子
+            if ava:
+                l = []
+                for tile in ava:
+                    x = tile[0]
+                    y = tile[1]
+                    right = get_right(x, y)
+                    left = get_left(x, y)
+                    up = get_up(x, y)
+                    down = get_down(x, y)
+                    if (left == right and left >= 3) or (up == down and up >= 3):
+                        L.append(tile)
+                    if left != 1 and right != 1 and up != 1 and down != 1:
+                        l.append(tile)
+                if not L:
+                    L = l
                     if not L:
-                        L = l
-                        if not L:
-                            L.append(random.choice(ava))
-                else:
-                    L = []
-            return L
-        else:
-            L=[self.board.getNext(belong, rround)]
-            if not L:
-                L.append(random.choice(self.board.getNone(not belong)))
-            return L
+                        L.append(random.choice(ava))
+            else:
+                L = []
+        return L
 
     def point(self, isFirst, currentRound):
         def f(x):
@@ -186,7 +181,6 @@ class _Node:
                     f(self.board.getValue((i, j)))
                 R[i, j] = (2 * self.board.getBelong((i, j + 4)) -
                            1) * f(self.board.getValue((i, j + 4)))
-
         part1 = np.sum(L) + np.sum(R)
         part2 = np.sum(R > 0) + np.sum(L < 0)
         part3 = np.sum(L == 0) - np.sum(R == 0)
@@ -254,7 +248,7 @@ class _GameTree:
             if self.isFirst:
                 return self.search_depth_sim
             else:
-                return self.search_depth_sim-1
+                return self.search_depth_sim
 
     def decide(self, node, depth, alpha, beta, mode, rround):
         """
@@ -503,4 +497,4 @@ class _GameTree:
             self.complex = True
         if left < 0.7:
             self.complex = False
-            print('switch to simple', currentRound)
+            # print('switch to simple', currentRound)

@@ -1,0 +1,107 @@
+-> 71573729028649050
+
+offensive:
+pass
+
+defensive:
+pass
+==================================================
+-> 1498198160101650536
+
+offensive:
+Traceback (most recent call last):
+  File "/home/wangyifei/courses/daa/2048/sessdsa.2048/src/tools/plat.py", line 57, in wrappedFunc
+    result = func(*args, **kwargs)
+  File "/home/wangyifei/courses/daa/2048/2048/caiji/caiji-5-3-0.py", line 22, in output
+    self.tree.root, self.tree.get_depth(), -float('inf'), float('inf'), mode, currentRound)[0]
+  File "/home/wangyifei/courses/daa/2048/2048/caiji/caiji-5-3-0.py", line 334, in decide
+    b.add(not node.belong, toput[0])
+  File "/home/wangyifei/courses/daa/2048/sessdsa.2048/src/tools/constants.py", line 76, in add
+    belong = position[1] < COLUMNS // 2  # 重定义棋子的归属
+IndexError: tuple index out of range
+
+defensive:
+pass
+==================================================
+-> 340305142685413490
+
+offensive:
+pass
+
+defensive:
+pass
+==================================================
+-> 473470993717833857
+
+offensive:
+pass
+
+defensive:
+pass
+==================================================
+-> 1321105626192982158
+
+offensive:
+pass
+
+defensive:
+pass
+==================================================
+-> 1042322715438002333
+
+offensive:
+Traceback (most recent call last):
+  File "/home/wangyifei/courses/daa/2048/sessdsa.2048/src/tools/plat.py", line 57, in wrappedFunc
+    result = func(*args, **kwargs)
+  File "/home/wangyifei/courses/daa/2048/2048/caiji/caiji-5-3-0.py", line 22, in output
+    self.tree.root, self.tree.get_depth(), -float('inf'), float('inf'), mode, currentRound)[0]
+  File "/home/wangyifei/courses/daa/2048/2048/caiji/caiji-5-3-0.py", line 334, in decide
+    b.add(not node.belong, toput[0])
+  File "/home/wangyifei/courses/daa/2048/sessdsa.2048/src/tools/constants.py", line 76, in add
+    belong = position[1] < COLUMNS // 2  # 重定义棋子的归属
+IndexError: tuple index out of range
+
+defensive:
+pass
+==================================================
+-> 2276010127653908644
+
+offensive:
+pass
+
+defensive:
+pass
+==================================================
+-> 400678534432993462
+
+offensive:
+Traceback (most recent call last):
+  File "/home/wangyifei/courses/daa/2048/sessdsa.2048/src/tools/plat.py", line 57, in wrappedFunc
+    result = func(*args, **kwargs)
+  File "/home/wangyifei/courses/daa/2048/2048/caiji/caiji-5-3-0.py", line 22, in output
+    self.tree.root, self.tree.get_depth(), -float('inf'), float('inf'), mode, currentRound)[0]
+  File "/home/wangyifei/courses/daa/2048/2048/caiji/caiji-5-3-0.py", line 334, in decide
+    b.add(not node.belong, toput[0])
+  File "/home/wangyifei/courses/daa/2048/sessdsa.2048/src/tools/constants.py", line 76, in add
+    belong = position[1] < COLUMNS // 2  # 重定义棋子的归属
+IndexError: tuple index out of range
+
+defensive:
+pass
+==================================================
+-> 968187510729519290
+
+offensive:
+pass
+
+defensive:
+pass
+==================================================
+-> 650837491762376904
+
+offensive:
+pass
+
+defensive:
+pass
+==================================================

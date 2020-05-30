@@ -7,7 +7,7 @@ class Player:
     def __init__(self, isFirst, array):
         self.isFirst = isFirst
         self.array = array
-        self.tree = _GameTree(isFirst, 5, 2)
+        self.tree = _GameTree(isFirst, 4, 2)
 
     def output(self, currentRound, board, mode):
         lastmode = ""
@@ -503,3 +503,4 @@ class _GameTree:
             self.complex = True
         if left < 0.7:
             self.complex = False
+            print('switch to simple', currentRound)

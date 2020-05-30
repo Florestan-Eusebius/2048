@@ -1,0 +1,85 @@
+==================================================
+total matches: 10
+name: 71573729028649050 -> player0 to player1 -> 500 rounds
+name: 1498198160101650536 -> player1 to player0 -> 242 rounds
+name: 340305142685413490 -> player0 to player1 -> 500 rounds
+name: 473470993717833857 -> player1 to player0 -> 234 rounds
+name: 1321105626192982158 -> player0 to player1 -> 500 rounds
+name: 1042322715438002333 -> player1 to player0 -> 292 rounds
+name: 2276010127653908644 -> player0 to player1 -> 500 rounds
+name: 400678534432993462 -> player1 to player0 -> 433 rounds
+name: 968187510729519290 -> player0 to player1 -> 500 rounds
+name: 650837491762376904 -> player1 to player0 -> 500 rounds
+==================================================
+player0 from path ../../user/Cs.py
+
+offensive cases:
+    average time: 3.836
+        win rate: 80.00%
+        win: 4 at
+            71573729028649050
+            340305142685413490
+            2276010127653908644
+            968187510729519290
+        lose: 1 at
+            1321105626192982158
+        violate: 0 at
+            
+        timeout: 0 at
+            
+        error: 0 at
+            
+defensive cases:
+    average time: 5.136
+        win rate: 80.00%
+        win: 4 at
+            1498198160101650536
+            473470993717833857
+            1042322715438002333
+            400678534432993462
+        lose: 1 at
+            650837491762376904
+        violate: 0 at
+            
+        timeout: 0 at
+            
+        error: 0 at
+            
+==================================================
+player1 from path ../../../2048/caiji/caiji-5-3-0.py
+
+offensive cases:
+    average time: 9.520
+        win rate: 20.00%
+        win: 1 at
+            650837491762376904
+        lose: 4 at
+            1498198160101650536
+            473470993717833857
+            1042322715438002333
+            400678534432993462
+        violate: 0 at
+            
+        timeout: 1 at
+            473470993717833857
+        error: 3 at
+            1498198160101650536
+            1042322715438002333
+            400678534432993462
+defensive cases:
+    average time: 3.378
+        win rate: 20.00%
+        win: 1 at
+            1321105626192982158
+        lose: 4 at
+            71573729028649050
+            340305142685413490
+            2276010127653908644
+            968187510729519290
+        violate: 0 at
+            
+        timeout: 0 at
+            
+        error: 0 at
+            
+==================================================

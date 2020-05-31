@@ -168,7 +168,7 @@ class _Node:
                 if not L:
                     L = l
                     if not L:
-                        L.append(random.choice(ava))
+                        L.append(ava[0])
             else:
                 L = []
         return L

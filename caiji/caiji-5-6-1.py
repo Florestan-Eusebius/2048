@@ -66,7 +66,7 @@ class _Node:
             L.append(item.decision)
         return L
 
-    def get_available_pos(self, belong, rround, iscomplex):
+    def get_available_pos(self, belong, rround):
         """
         获取可以落子的位置列表.
         - 如果可以在己方落子, 先添加己方位置.
@@ -138,16 +138,19 @@ class _Node:
         L = []
         if pos:  # 主动落子
             L.append(pos)
-            if iscomplex:
-                for tile in ava:
-                    x = tile[0]
-                    y = tile[1]
-                    right = get_right(x, y)
-                    left = get_left(x, y)
-                    up = get_up(x, y)
-                    down = get_down(x, y)
-                    if (left>=3 and (left==right or left==up or left==down)) or (up>=3 and (up==down or up==right)) or (right>=3 and right==down):
-                        L.append(tile)
+            if rround > 50:
+                if len(ava)<=3:
+                    L+=ava
+                else:
+                    for tile in ava:
+                        x = tile[0]
+                        y = tile[1]
+                        right = get_right(x, y)
+                        left = get_left(x, y)
+                        up = get_up(x, y)
+                        down = get_down(x, y)
+                        if (left>=3 and (left==right or left==up or left==down)) or (up>=3 and (up==down or up==right)) or (right>=3 and right==down):
+                            L.append(tile)
         else:  # 被动向对方落子
             if ava:
                 l = []
@@ -265,7 +268,7 @@ class _GameTree:
                 if node.belong:  # 轮到对方决策, min 节点
                     value = float("inf")
                     if mode == "position":
-                        toput = node.get_available_pos(not node.belong, rround, self.complex)
+                        toput = node.get_available_pos(not node.belong, rround)
                         hasput = node.get_child_decision()
                         for i in toput:
                             if i in hasput:
@@ -319,7 +322,7 @@ class _GameTree:
                         if self.complex and depth == self.get_depth() and node.trace_child is not None:
                             # print("use",rround)
                             return node.trace_child.decision, 0
-                        toput = node.get_available_pos(not node.belong, rround, self.complex)
+                        toput = node.get_available_pos(not node.belong, rround)
                         hasput = node.get_child_decision()
                         if len(toput) == 1 and depth == self.get_depth():
                             if toput[0] not in hasput:
@@ -382,7 +385,7 @@ class _GameTree:
                         if self.complex and depth == self.get_depth() and node.trace_child is not None:
                             # print("use",rround)
                             return node.trace_child.decision, 0
-                        toput = node.get_available_pos(not node.belong, rround, self.complex)
+                        toput = node.get_available_pos(not node.belong, rround)
                         hasput = node.get_child_decision()
                         if len(toput) == 1 and depth == self.get_depth():
                             if toput[0] not in hasput:
@@ -442,7 +445,7 @@ class _GameTree:
                 else:  # 轮到对方决策, min 节点
                     value = float("inf")
                     if mode == "position":
-                        toput = node.get_available_pos(not node.belong, rround, self.complex)
+                        toput = node.get_available_pos(not node.belong, rround)
                         hasput = node.get_child_decision()
                         for i in toput:
                             if i in hasput:
@@ -493,13 +496,6 @@ class _GameTree:
     def modify_depth(self, board, currentRound):
         left = board.getTime(self.isFirst)
         if currentRound > 50:
-            if currentRound == 60:
-                self.sim_time_end = left
             self.complex = True
-            if left/self.sim_time_end > (500-currentRound)/440+0.1:
-                self.search_depth_com = 6
-            else:
-                self.search_depth_com = 4
         if left < 0.7:
             self.complex = False
-            # print('switch to simple', currentRound)

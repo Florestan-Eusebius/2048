@@ -19,7 +19,7 @@ class Player:
         self.tree.cut_to_current(board, lastmode)
         if mode == "position" or mode == "direction":
             decision = self.tree.decide(
-                self.tree.root, self.tree.get_depth(currentRound, mode), -float('inf'), float('inf'), mode, currentRound)[0]
+                self.tree.root, self.tree.get_depth(), -float('inf'), float('inf'), mode, currentRound)[0]
         else:
             pass
         self.tree.shift(decision, mode)
@@ -66,7 +66,7 @@ class _Node:
             L.append(item.decision)
         return L
 
-    def get_available_pos(self, belong, rround):
+    def get_available_pos(self, belong, rround, iscomplex):
         """
         获取可以落子的位置列表.
         - 如果可以在己方落子, 先添加己方位置.
@@ -138,7 +138,7 @@ class _Node:
         L = []
         if pos:  # 主动落子
             L.append(pos)
-            if rround > 50:
+            if iscomplex:
                 for tile in ava:
                     x = tile[0]
                     y = tile[1]
@@ -207,7 +207,6 @@ class _GameTree:
         self.search_depth_com = sdc
         self.search_depth_sim = sds
         self.complex = False
-        self.sim_time_end = 0
 
     def cut_to_current(self, board, mode):
         """
@@ -238,23 +237,17 @@ class _GameTree:
         else:
             self.root.belong = not self.root.belong
 
-    def get_depth(self, rround, mode):
-        if rround < 150:
-            if mode=='position':
+    def get_depth(self):
+        if self.complex:
+            if self.isFirst:
+                return self.search_depth_com
+            else:
+                return self.search_depth_com - 1
+        else:
+            if self.isFirst:
                 return self.search_depth_sim
             else:
-                return 4
-        else:
-            if self.complex:
-                if self.isFirst:
-                    return self.search_depth_com
-                else:
-                    return self.search_depth_com - 1
-            else:
-                if self.isFirst:
-                    return self.search_depth_sim
-                else:
-                    return self.search_depth_sim
+                return self.search_depth_sim
 
     def decide(self, node, depth, alpha, beta, mode, rround):
         """
@@ -272,7 +265,7 @@ class _GameTree:
                 if node.belong:  # 轮到对方决策, min 节点
                     value = float("inf")
                     if mode == "position":
-                        toput = node.get_available_pos(not node.belong, rround)
+                        toput = node.get_available_pos(not node.belong, rround, self.complex)
                         hasput = node.get_child_decision()
                         for i in toput:
                             if i in hasput:
@@ -323,12 +316,12 @@ class _GameTree:
                 else:  # 轮到己方决策, max 节点
                     value = -float("inf")
                     if mode == "position":
-                        if self.complex and depth == self.get_depth(rround, mode) and node.trace_child is not None:
+                        if self.complex and depth == self.get_depth() and node.trace_child is not None:
                             # print("use",rround)
                             return node.trace_child.decision, 0
-                        toput = node.get_available_pos(not node.belong, rround)
+                        toput = node.get_available_pos(not node.belong, rround, self.complex)
                         hasput = node.get_child_decision()
-                        if len(toput) == 1 and depth == self.get_depth(rround, mode):
+                        if len(toput) == 1 and depth == self.get_depth():
                             if toput[0] not in hasput:
                                 b = node.board.copy()
                                 b.add(not node.belong, toput[0])
@@ -386,12 +379,12 @@ class _GameTree:
                 if node.belong:  # 轮到我方决策, max 节点
                     value = -float("inf")
                     if mode == "position":
-                        if self.complex and depth == self.get_depth(rround,mode) and node.trace_child is not None:
+                        if self.complex and depth == self.get_depth() and node.trace_child is not None:
                             # print("use",rround)
                             return node.trace_child.decision, 0
-                        toput = node.get_available_pos(not node.belong, rround)
+                        toput = node.get_available_pos(not node.belong, rround, self.complex)
                         hasput = node.get_child_decision()
-                        if len(toput) == 1 and depth == self.get_depth(rround,mode):
+                        if len(toput) == 1 and depth == self.get_depth():
                             if toput[0] not in hasput:
                                 b = node.board.copy()
                                 b.add(not node.belong, toput[0])
@@ -449,7 +442,7 @@ class _GameTree:
                 else:  # 轮到对方决策, min 节点
                     value = float("inf")
                     if mode == "position":
-                        toput = node.get_available_pos(not node.belong, rround)
+                        toput = node.get_available_pos(not node.belong, rround, self.complex)
                         hasput = node.get_child_decision()
                         for i in toput:
                             if i in hasput:
@@ -507,6 +500,6 @@ class _GameTree:
                 self.search_depth_com = 6
             else:
                 self.search_depth_com = 4
-            print(self.search_depth_com)
         if left < 0.7:
             self.complex = False
+            # print('switch to simple', currentRound)

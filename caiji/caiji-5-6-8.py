@@ -479,9 +479,5 @@ class _GameTree:
 
     def modify_depth(self, board, currentRound):
         left = board.getTime(self.isFirst)
-        if self.complex and (left-0.7)/5 > (500-currentRound)/500:
-            self.search_depth_com=6
-        else:
-            self.search_depth_com=4
         if left < 0.7:
             self.complex = False

@@ -496,4 +496,4 @@ class _GameTree:
             self.complex = True
         if left < 0.7:
             self.complex = False
-            # print('switch to simple', currentRound)
+            print('switch to simple', currentRound)

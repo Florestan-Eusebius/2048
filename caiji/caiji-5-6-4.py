@@ -174,7 +174,7 @@ class _Node:
         return L
 
     def point(self, isFirst):
-        values=[0,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768]
+        values=[0,2,5,12,28,64,147,338,776,1783,4096,9410,21619,49667]
         L, R = np.zeros([4, 4]), np.zeros([4, 4])
         for i in range(4):
             for j in range(4):

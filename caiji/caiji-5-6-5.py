@@ -174,7 +174,8 @@ class _Node:
         return L
 
     def point(self, isFirst):
-        values=[0,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768]
+        values=[0, 2.14, 4.59, 9.85, 21.11, 45.25, 97.00, 207.94, 445.72, 955.42, 2048, 4389.98, 9410.14, 20171.07, 43237.64, 92681.90]
+
         L, R = np.zeros([4, 4]), np.zeros([4, 4])
         for i in range(4):
             for j in range(4):
@@ -245,7 +246,7 @@ class _GameTree:
             if self.isFirst:
                 return self.search_depth_com
             else:
-                return self.search_depth_com - 1
+                return self.search_depth_com -1 
         else:
             if self.isFirst:
                 return self.search_depth_sim

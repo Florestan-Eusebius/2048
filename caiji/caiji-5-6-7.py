@@ -1,5 +1,3 @@
-import math
-import random
 import numpy as np
 
 
@@ -286,8 +284,8 @@ class _GameTree:
                             if value < beta:
                                 beta = value
                                 decision = i
-                                node.trace_child = node.child[node.get_child_decision().index(
-                                    i)]
+                                # node.trace_child = node.child[node.get_child_decision().index(
+                                #     i)]
                             if alpha >= beta:
                                 break
                     if mode == "direction":
@@ -320,7 +318,6 @@ class _GameTree:
                     value = -float("inf")
                     if mode == "position":
                         if self.complex and depth == self.get_depth() and node.trace_child is not None:
-                            # print("use",rround)
                             return node.trace_child.decision, 0
                         toput = node.get_available_pos(not node.belong, rround,self.complex)
                         hasput = node.get_child_decision()
@@ -351,6 +348,7 @@ class _GameTree:
                                 node.trace_child = node.child[node.get_child_decision().index(
                                     i)]
                             if alpha >= beta:
+                                node.trace_child = None
                                 break
                     if mode == "direction":
                         hasmove = node.get_child_decision()
@@ -414,6 +412,7 @@ class _GameTree:
                                 node.trace_child = node.child[node.get_child_decision().index(
                                     i)]
                             if alpha >= beta:
+                                node.trace_child = None
                                 break
                     if mode == "direction":
                         hasmove = node.get_child_decision()
@@ -463,8 +462,8 @@ class _GameTree:
                             if value < beta:
                                 beta = value
                                 decision = i
-                                node.trace_child = node.child[node.get_child_decision().index(
-                                    i)]
+                                # node.trace_child = node.child[node.get_child_decision().index(
+                                #     i)]
                             if alpha >= beta:
                                 break
                     if mode == "direction":

@@ -36,16 +36,17 @@ class Player:
             return
 
 def price(self, board):
-    values=[0, 2, 5, 12, 27, 58, 121, 248, 503, 1014, 2037]
+    def f(x):
+        return int((1 << x) * (x > 0))
+
     L, R = np.zeros([4, 4]), np.zeros([4, 4])
     for i in range(4):
         for j in range(4):
-            L[j, i] = (2 * board.getBelong((i, j)) - 1) * values[board.getValue((i, j))]
-            R[j, i] = (2 * board.getBelong((i, j + 4)) - 1) * values[board.getValue((i, j + 4))]
+            L[i, j] = (2 * board.getBelong((i, j)) - 1) * f(board.getValue((i, j)))
+            R[i, j] = (2 * board.getBelong((i, j + 4)) - 1) * f(board.getValue((i, j + 4)))
     
     part1 = np.sum(L + R)
-    part2 = np.sum((R[0] > 0) * R[0]) - 2 * np.sum((R[1] > 0) * R[1]) + \
-            np.sum((L[3] < 0) * L[3]) - 2 * np.sum((L[2] < 0) * L[2])
+    part2 = np.sum(R > 0) - np.sum(L < 0)
     part3 = np.count_nonzero(R) - np.count_nonzero(L)
     part4 = np.count_nonzero(R[:3] - R[1:]) + np.count_nonzero(R.T[:3] - R.T[1:]) -\
             np.count_nonzero(L[:3] - L[1:]) - np.count_nonzero(L.T[:3] - L.T[1:])    
@@ -459,4 +460,4 @@ def dec_s(self, board, currentRound, depth, alpha, beta):
             b = board.copy()
         return decision
     
-    
+

@@ -182,8 +182,8 @@ class _Node:
                            1) * values[self.board.getValue((i, j + 4))]
 
         part1 = np.sum(L) + np.sum(R)
-        part2 = np.sum(R > 0) - np.sum(L < 0)
-        part3 = np.count_nonzero(R) - np.count_nonzero(L)
+        part2 = np.sum(R > 0) + np.sum(L < 0)
+        part3 = np.sum(L == 0) - np.sum(R == 0)
         part4 = np.count_nonzero(R[:3] - R[1:]) + np.count_nonzero(R.T[:3] - R.T[1:]) -\
             np.count_nonzero(L[:3] - L[1:]) - \
             np.count_nonzero(L.T[:3] - L.T[1:])

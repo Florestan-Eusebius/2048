@@ -1,11 +1,13 @@
 import numpy as np
-
+import time
+import csv
 
 class Player:
     def __init__(self, isFirst, array):
         self.isFirst = isFirst
         self.array = array
         self.tree = _GameTree(isFirst, 4, 2)
+        _Node.number+=1
 
     def output(self, currentRound, board, mode):
         lastmode = ""
@@ -32,7 +34,8 @@ class _Node:
     因其记录的是到达这一步的决策, 其面临的下一步决策就是另一方的. 所以 belong=isFirst 的是 min 节点, 反之为 max 节点.
     board 为此次决策之后的棋盘
     """
-
+    file="pointtimeA"
+    number=0
     def __init__(self, mode, decision, belong, board, parent=None):
         self.mode = mode
         self.decision = decision
@@ -172,6 +175,9 @@ class _Node:
         return L
 
     def point(self, isFirst):
+        f=open(_Node.file+str(_Node.number)+'.csv','a')
+        writer=csv.writer(f)
+        t1=time.time()
         values=[0, 2.14, 4.59, 9.85, 21.11, 45.25, 97.00, 207.94, 445.72, 955.42, 2048, 4389.98, 9410.14, 20171.07, 43237.64, 92681.90]
         L, R = np.zeros([4, 4]), np.zeros([4, 4])
         for i in range(4):
@@ -186,6 +192,8 @@ class _Node:
         part3 = np.count_nonzero(R) - np.count_nonzero(L)
         part4 = np.count_nonzero(R[:3] - R[1:]) + np.count_nonzero(R.T[:3] - R.T[1:]) -\
                 np.count_nonzero(L[:3] - L[1:]) - np.count_nonzero(L.T[:3] - L.T[1:])    
+        t2=time.time()
+        writer.writerow([t2-t1])
         return (part1 + part2 + part3 + part4) * (2 * isFirst - 1)
 
     def __iter__(self):

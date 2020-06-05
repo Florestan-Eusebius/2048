@@ -32,7 +32,8 @@ class _Node:
     因其记录的是到达这一步的决策, 其面临的下一步决策就是另一方的. 所以 belong=isFirst 的是 min 节点, 反之为 max 节点.
     board 为此次决策之后的棋盘
     """
-
+    len = 0
+    n = 0
     def __init__(self, mode, decision, belong, board, parent=None):
         self.mode = mode
         self.decision = decision
@@ -149,6 +150,9 @@ class _Node:
                         down = get_down(x, y)
                         if (left>=3 and (left==right or left==up or left==down)) or (up>=3 and (up==down or up==right)) or (right>=3 and right==down):
                             L.append(tile)
+                _Node.n+=1
+                _Node.len+=len(L)
+                print(_Node.len/_Node.n)
         else:  # 被动向对方落子
             if ava:
                 l = []

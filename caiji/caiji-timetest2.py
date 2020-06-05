@@ -23,6 +23,7 @@ class Player:
         self.tree.shift(decision, mode)
         if currentRound % 20 == 0:
             self.tree.modify_depth(board, currentRound)
+        print(_GameTree.REUSE/_GameTree.CREATE)
         return decision
 
 
@@ -200,6 +201,8 @@ class _GameTree:
     """
     决策树. 在整场游戏一开始生成, 一直存在, 可避免重复搜索.
     """
+    CREATE = 0
+    REUSE = 0
 
     def __init__(self, isFirst, sdc, sds):
         self.root = _Node(None, None, not isFirst, None)
@@ -269,10 +272,12 @@ class _GameTree:
                         hasput = node.get_child_decision()
                         for i in toput:
                             if i in hasput:
+                                _GameTree.REUSE+=1
                                 item = node.child[hasput.index(i)]
                                 value = min(self.decide(
                                     item, depth, alpha, beta, "direction", rround)[1], value)
                             else:
+                                _GameTree.CREATE+=1
                                 b = node.board.copy()
                                 b.add(not node.belong, i)
                                 newnode = _Node(
@@ -290,10 +295,12 @@ class _GameTree:
                         rround += 1
                         for i in tomove[::-1]:
                             if (i,) in hasmove:
+                                _GameTree.REUSE+=1
                                 item = node.child[hasmove.index((i,))]
                                 value = min(self.decide(item, depth-1,
                                                         alpha, beta, "position", rround)[1], value)
                             else:
+                                _GameTree.CREATE+=1
                                 b = node.board.copy()
                                 if b.move(not node.belong, i):
                                     newnode = _Node(
@@ -318,18 +325,23 @@ class _GameTree:
                         hasput = node.get_child_decision()
                         if len(toput) == 1 and depth == self.get_depth():
                             if toput[0] not in hasput:
+                                _GameTree.CREATE+=1
                                 b = node.board.copy()
                                 b.add(not node.belong, toput[0])
                                 newnode = _Node(
                                     mode, toput[0], not node.belong, b, parent=node)
                                 node.child.append(newnode)
+                            else:
+                                _GameTree.REUSE+=1
                             return toput[0], 0  # 初次调用自己做决策, 只有一个选择, 立刻返回这个选择
                         for i in toput:
                             if i in hasput:
+                                _GameTree.REUSE+=1
                                 item = node.child[hasput.index(i)]
                                 value = max(self.decide(
                                     item, depth, alpha, beta, "position", rround)[1], value)
                             else:
+                                _GameTree.CREATE+=1
                                 b = node.board.copy()
                                 b.add(not node.belong, i)
                                 newnode = _Node(
@@ -349,10 +361,12 @@ class _GameTree:
                         hasmove = node.get_child_decision()
                         for i in tomove:
                             if (i,) in hasmove:
+                                _GameTree.REUSE+=1
                                 item = node.child[hasmove.index((i,))]
                                 value = max(self.decide(item, depth-1,
                                                         alpha, beta, "direction", rround)[1], value)
                             else:
+                                _GameTree.CREATE+=1
                                 b = node.board.copy()
                                 if b.move(not node.belong, i):
                                     newnode = _Node(
@@ -378,18 +392,23 @@ class _GameTree:
                         hasput = node.get_child_decision()
                         if len(toput) == 1 and depth == self.get_depth():
                             if toput[0] not in hasput:
+                                _GameTree.CREATE+=1
                                 b = node.board.copy()
                                 b.add(not node.belong, toput[0])
                                 newnode = _Node(
                                     mode, toput[0], not node.belong, b, parent=node)
                                 node.child.append(newnode)
+                            else:
+                                _GameTree.REUSE+=1
                             return toput[0], 0  # 初次调用自己做决策, 只有一个选择, 立刻返回这个选择
                         for i in toput:
                             if i in hasput:
+                                _GameTree.REUSE+=1
                                 item = node.child[hasput.index(i)]
                                 value = max(self.decide(
                                     item, depth, alpha, beta, "direction", rround)[1], value)
                             else:
+                                _GameTree.CREATE+=1
                                 b = node.board.copy()
                                 b.add(not node.belong, i)
                                 newnode = _Node(
@@ -410,10 +429,12 @@ class _GameTree:
                         rround += 1
                         for i in tomove:
                             if (i,) in hasmove:
+                                _GameTree.REUSE+=1
                                 item = node.child[hasmove.index((i,))]
                                 value = max(self.decide(item, depth-1,
                                                         alpha, beta, "position", rround)[1], value)
                             else:
+                                _GameTree.CREATE+=1
                                 b = node.board.copy()
                                 if b.move(not node.belong, i):
                                     newnode = _Node(
@@ -436,10 +457,12 @@ class _GameTree:
                         hasput = node.get_child_decision()
                         for i in toput:
                             if i in hasput:
+                                _GameTree.REUSE+=1
                                 item = node.child[hasput.index(i)]
                                 value = min(self.decide(
                                     item, depth, alpha, beta, "position", rround)[1], value)
                             else:
+                                _GameTree.CREATE+=1
                                 b = node.board.copy()
                                 b.add(not node.belong, i)
                                 newnode = _Node(
@@ -456,10 +479,12 @@ class _GameTree:
                         hasmove = node.get_child_decision()
                         for i in tomove[::-1]:
                             if (i,) in hasmove:
+                                _GameTree.REUSE+=1
                                 item = node.child[hasmove.index((i,))]
                                 value = min(self.decide(item, depth-1,
                                                         alpha, beta, "direction", rround)[1], value)
                             else:
+                                _GameTree.CREATE+=1
                                 b = node.board.copy()
                                 if b.move(not node.belong, i):
                                     newnode = _Node(

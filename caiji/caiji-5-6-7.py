@@ -1,11 +1,14 @@
 import numpy as np
 
-
 class Player:
     def __init__(self, isFirst, array):
         self.isFirst = isFirst
         self.array = array
+<<<<<<< HEAD
         self.tree = _GameTree(isFirst, 4, 2) # 初始化决策树
+=======
+        self.tree = _GameTree(isFirst, 4, 2) # 初始化决策树，复杂模式和简单模式搜索深度分别为4，2
+>>>>>>> 59ad87fe6ee847328bafd01c5afbc4a6521e567f
 
     def output(self, currentRound, board, mode):
         lastmode = ""

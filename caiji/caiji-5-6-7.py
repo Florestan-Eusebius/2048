@@ -1,14 +1,11 @@
 import numpy as np
 
+
 class Player:
     def __init__(self, isFirst, array):
         self.isFirst = isFirst
         self.array = array
-<<<<<<< HEAD
-        self.tree = _GameTree(isFirst, 4, 2) # 初始化决策树
-=======
-        self.tree = _GameTree(isFirst, 4, 2) # 初始化决策树，复杂模式和简单模式搜索深度分别为4，2
->>>>>>> 59ad87fe6ee847328bafd01c5afbc4a6521e567f
+        self.tree = _GameTree(isFirst, 4, 2)  # 初始化决策树
 
     def output(self, currentRound, board, mode):
         lastmode = ""
@@ -51,23 +48,10 @@ class _Node:
         self.board = board
         self.trace_child = None
 
-    def set_add_child(self, position, belong):
-        b = self.board.copy()
-        mode = "position"
-        b.add(belong, position)
-        self.child.append(_Node(mode, position, belong, b, parent=self))
-
-    def set_move_child(self, direction, belong):
-        b = self.board.copy()
-        mode = "direction"
-        b.move(belong, direction)
-        self.child.append(_Node(mode, direction, belong,
-                                b, parent=self))
-
-    def get_decision(self):
-        return self.decision
-
     def get_child_decision(self):
+        """
+        列表形式返回子节点的决策
+        """
         L = []
         for item in self.child:
             L.append(item.decision)
@@ -75,14 +59,10 @@ class _Node:
 
     def get_available_pos(self, belong, rround, isComplex):
         """
-        获取可以落子的位置列表.
-        - 如果可以在己方落子, 先添加己方位置.
-        - 当且仅当对方空位小于4(主动)或己方没有落子位置时(被动)考虑向对方落子.
-        - 向对方落子位置需满足如下条件(主动必须满足, 被动尽量满足):
-            - 不能立即被合并
-            - 夹在可以合并的两个级别不小于3的棋子之间
+        根据启发式规则(见说明文档)获取可以落子的位置列表.
         """
         bb = self.board.getRaw()
+        # 获取某个棋子制定方向上最近棋子的等级
 
         def get_right(x, y):
             if y == 7:
@@ -146,8 +126,8 @@ class _Node:
         if pos:  # 主动落子
             L.append(pos)
             if rround > 50:
-                if len(ava)<=3 and isComplex:
-                    L+=ava
+                if len(ava) <= 3 and isComplex:
+                    L += ava
                 else:
                     for tile in ava:
                         x = tile[0]
@@ -156,7 +136,7 @@ class _Node:
                         left = get_left(x, y)
                         up = get_up(x, y)
                         down = get_down(x, y)
-                        if (left>=3 and (left==right or left==up or left==down)) or (up>=3 and (up==down or up==right)) or (right>=3 and right==down):
+                        if (left >= 3 and (left == right or left == up or left == down)) or (up >= 3 and (up == down or up == right)) or (right >= 3 and right == down):
                             L.append(tile)
         else:  # 被动向对方落子
             if ava:
@@ -168,20 +148,24 @@ class _Node:
                     left = get_left(x, y)
                     up = get_up(x, y)
                     down = get_down(x, y)
-                    if (left>=3 and (left==right or left==up or left==down)) or (up>=3 and (up==down or up==right)) or (right>=3 and right==down):
+                    if (left >= 3 and (left == right or left == up or left == down)) or (up >= 3 and (up == down or up == right)) or (right >= 3 and right == down):
                         L.append(tile)
                     if left != 1 and right != 1 and up != 1 and down != 1:
                         l.append(tile)
-                if not L:
+                if not L:  # 如果不能捣乱, 就尽量避免损失
                     L = l
-                    if not L:
+                    if not L:  # 还是不行, 就躺平平
                         L.append(ava[0])
             else:
                 L = []
         return L
 
     def point(self, isFirst):
-        values=[0, 2.14, 4.59, 9.85, 21.11, 45.25, 97.00, 207.94, 445.72, 955.42, 2048, 4389.98, 9410.14, 20171.07, 43237.64, 92681.90]
+        """
+        返回局面对应的估值函数, 各部分的含义见说明文档
+        """
+        values = [0, 2.14, 4.59, 9.85, 21.11, 45.25, 97.00, 207.94, 445.72, 955.42,
+                  2048, 4389.98, 9410.14, 20171.07, 43237.64, 92681.90]  # 棋子面值的1.1次幂
         L, R = np.zeros([4, 4]), np.zeros([4, 4])
         for i in range(4):
             for j in range(4):
@@ -194,11 +178,14 @@ class _Node:
         part2 = np.sum(R > 0) - np.sum(L < 0)
         part3 = np.count_nonzero(R) - np.count_nonzero(L)
         part4 = np.count_nonzero(R[:3] - R[1:]) + np.count_nonzero(R.T[:3] - R.T[1:]) -\
-                np.count_nonzero(L[:3] - L[1:]) - np.count_nonzero(L.T[:3] - L.T[1:])    
+            np.count_nonzero(L[:3] - L[1:]) - \
+            np.count_nonzero(L.T[:3] - L.T[1:])
         return (part1 + part2 + part3 + part4) * (2 * isFirst - 1)
 
     def __iter__(self):
-        """按照从叶到根, 从左到右的顺序迭代"""
+        """
+        按照从叶到根, 从左到右的顺序迭代
+        """
         yield self
         if self.child:
             for item in self.child:
@@ -207,7 +194,10 @@ class _Node:
 
 class _GameTree:
     """
-    决策树. 在整场游戏一开始生成, 一直存在, 可避免重复搜索.
+    - 决策树. 在整场游戏一开始生成, 一直存在, 可避免重复搜索.
+    - isFirst表示是否先手
+    - 两个search_depth分别对应复杂模式和简单模式
+    - complex表示是否为复杂模式
     """
 
     def __init__(self, isFirst, sdc, sds):
@@ -219,7 +209,7 @@ class _GameTree:
 
     def cut_to_current(self, board, mode):
         """
-        在对方决策后己方决策前, 将博弈树树根更新为当前局面. 己方决策后这一更新在决策的函数中实现.\\
+        在对方决策后己方决策前, 将博弈树树根更新为当前局面.\\
         mode 为前一次决策的内容. board 为当前棋盘.
         """
         deci = board.getDecision(not self.isFirst)
@@ -237,6 +227,9 @@ class _GameTree:
                 self.root.board = board.copy()
 
     def shift(self, decision, mode):
+        """
+        己方决策后, 将决策树树根更新为当前局面
+        """
         if mode == "position":
             d = self.root.get_child_decision()
             self.root = self.root.child[d.index(decision)]
@@ -247,6 +240,9 @@ class _GameTree:
             self.root.belong = not self.root.belong
 
     def get_depth(self):
+        """
+        根据当前的复杂/简单模式确定搜索深度
+        """
         if self.complex:
             if self.isFirst:
                 return self.search_depth_com
@@ -274,7 +270,8 @@ class _GameTree:
                 if node.belong:  # 轮到对方决策, min 节点
                     value = float("inf")
                     if mode == "position":
-                        toput = node.get_available_pos(not node.belong, rround, self.complex)
+                        toput = node.get_available_pos(
+                            not node.belong, rround, self.complex)
                         hasput = node.get_child_decision()
                         for i in toput:
                             if i in hasput:
@@ -322,8 +319,9 @@ class _GameTree:
                     value = -float("inf")
                     if mode == "position":
                         if self.complex and depth == self.get_depth() and node.trace_child is not None:
-                            return node.trace_child.decision, 0
-                        toput = node.get_available_pos(not node.belong, rround,self.complex)
+                            return node.trace_child.decision, 0 # 复杂模式下初次调用自己做决策, 如果已经搜索过, 则直接返回这个选择
+                        toput = node.get_available_pos(
+                            not node.belong, rround, self.complex)
                         hasput = node.get_child_decision()
                         if len(toput) == 1 and depth == self.get_depth():
                             if toput[0] not in hasput:
@@ -382,9 +380,10 @@ class _GameTree:
                     value = -float("inf")
                     if mode == "position":
                         if self.complex and depth == self.get_depth() and node.trace_child is not None:
-                            return node.trace_child.decision, 0
-                        toput = node.get_available_pos(not node.belong, rround,self.complex)
-                        hasput = node.get_child_decision()
+                            return node.trace_child.decision, 0 # 复杂模式下初次调用自己做决策, 如果已经搜索过, 则直接返回这个选择
+                        toput = node.get_available_pos(
+                            not node.belong, rround, self.complex)
+                        hasput = node.get_child_decision() 
                         if len(toput) == 1 and depth == self.get_depth():
                             if toput[0] not in hasput:
                                 b = node.board.copy()
@@ -441,7 +440,8 @@ class _GameTree:
                 else:  # 轮到对方决策, min 节点
                     value = float("inf")
                     if mode == "position":
-                        toput = node.get_available_pos(not node.belong, rround,self.complex)
+                        toput = node.get_available_pos(
+                            not node.belong, rround, self.complex)
                         hasput = node.get_child_decision()
                         for i in toput:
                             if i in hasput:
@@ -486,10 +486,13 @@ class _GameTree:
                     return decision, value
 
     def modify_depth(self, board, currentRound):
+        """
+        根据当前回合数剩余时间等调整模式和搜索深度
+        """
         left = board.getTime(self.isFirst)
         if self.complex and (left-0.7)/5 > (500-currentRound)/500:
-            self.search_depth_com=6
+            self.search_depth_com = 6
         else:
-            self.search_depth_com=4
+            self.search_depth_com = 4
         if left < 0.7:
             self.complex = False

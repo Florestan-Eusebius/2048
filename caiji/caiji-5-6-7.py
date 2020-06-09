@@ -5,32 +5,38 @@ class Player:
     def __init__(self, isFirst, array):
         self.isFirst = isFirst
         self.array = array
-        self.tree = _GameTree(isFirst, 4, 2)
+        self.tree = _GameTree(isFirst, 4, 2) # 初始化决策树
 
     def output(self, currentRound, board, mode):
         lastmode = ""
         decision = (-1,)
+        # 推算对方上次决策模式并爬树
         if self.isFirst:
             lastmode = "position" if mode == "direction" else "direction"
         else:
             lastmode = "position" if mode == "position" else "direction"
         self.tree.cut_to_current(board, lastmode)
+        # 决策
         if mode == "position" or mode == "direction":
             decision = self.tree.decide(
                 self.tree.root, self.tree.get_depth(), -float('inf'), float('inf'), mode, currentRound)[0]
         else:
             pass
+        # 做完决策后, 爬树
         self.tree.shift(decision, mode)
+        # 每20局更新搜索深度和模式
         if currentRound % 20 == 0:
             self.tree.modify_depth(board, currentRound)
+        # 返回决策内容
         return decision
 
 
 class _Node:
     """
-    决策树节点, 记录决策内容. belong表示谁做的决策, 己方为 isFirst, 反之为 not isFirst.
-    因其记录的是到达这一步的决策, 其面临的下一步决策就是另一方的. 所以 belong=isFirst 的是 min 节点, 反之为 max 节点.
-    board 为此次决策之后的棋盘
+    - 决策树节点, 记录决策内容. belong表示谁做的决策, 己方为 isFirst, 反之为 not isFirst.
+    - 因其记录的是到达这一步的决策, 其面临的下一步决策就是另一方的. 所以 belong=isFirst 的是 min 节点, 反之为 max 节点.
+    - board 为此次决策之后的棋盘.
+    - child用列表储存子节点, trace_child储存决策中储存的子节点.
     """
 
     def __init__(self, mode, decision, belong, board, parent=None):
